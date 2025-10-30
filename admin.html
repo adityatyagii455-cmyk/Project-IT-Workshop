@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NSS Admin Panel</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Scoped admin styles */
+    :root { --nss-green:#4a5a3a; --nss-green-2:#5a7a4a; --nss-primary:#87A96B; --nss-accent:#5A7A4A; --nss-bg:#f7f9f5; --nss-border:#dbe7d3; --nss-text:#2d3a2d; --nss-muted:#6b7a5a; }
+    body { color:var(--nss-text); background: radial-gradient(1200px 500px at -10% -20%, rgba(135,169,107,.12), transparent 60%), radial-gradient(1000px 500px at 120% 120%, rgba(90,122,74,.10), transparent 60%), linear-gradient(180deg, #ffffff 0%, #f9fbf7 100%); }
+    .admin-header { display:flex; align-items:center; justify-content:center; gap:10px; padding:24px 0 0; }
+    .admin-title { font-size:28px; font-weight:800; color:var(--nss-green); margin:0; }
+    .admin-sub { color:var(--nss-muted); font-size:14px; margin-top:6px; }
+    .admin-actions { display:flex; justify-content:center; margin-top:20px; }
+    .btn { position:relative; display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:10px 16px; border-radius:10px; border:1px solid var(--nss-accent); cursor:pointer; transition:transform .2s ease, box-shadow .2s ease, filter .2s ease; font-weight:700; background: rgba(255,255,255,.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); overflow:hidden; }
+    .btn::before { content:""; position:absolute; top:0; left:-120%; width:80%; height:100%; background:linear-gradient(90deg, transparent, rgba(255,255,255,.35), transparent); transform:skewX(-20deg); transition:left .6s ease; }
+    .btn:hover::before { left:120%; }
+    .btn-primary { background:linear-gradient(135deg, var(--nss-primary), var(--nss-accent)); color:#fff; border-color:transparent; box-shadow:0 10px 24px rgba(90,122,74,.25); }
+    .btn-primary:hover { filter:brightness(1.05); transform:translateY(-1px); box-shadow:0 14px 30px rgba(90,122,74,.3); }
+    .btn:active { transform:translateY(0); }
+    .btn-danger { background:#ff4444; color:#fff; border:none; }
+    .btn-danger:hover { filter:brightness(1.05); }
+    .card { background:rgba(255,255,255,.8); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border:1px solid var(--nss-border); border-radius:14px; box-shadow:0 10px 30px rgba(0,0,0,.06); }
+    .upload-card { max-width:860px; margin:30px auto; padding:28px; background:rgba(247,249,245,.85); border:1px solid var(--nss-border); border-radius:14px; box-shadow: 0 12px 28px rgba(74,90,58,.08); }
+    .upload-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+    .upload-title { font-size:20px; font-weight:800; color:var(--nss-green); margin:0; }
+    .hint { color:var(--nss-muted); font-size:13px; margin:6px 0 14px; }
+    .form-row { display:flex; gap:12px; flex-wrap:wrap; }
+    .input, .select, .textarea, .file { width:300px; max-width:100%; padding:10px 12px; border:1px solid var(--nss-border); border-radius:10px; outline:none; background:#fff; transition:border-color .2s ease, box-shadow .2s ease; }
+    .input:focus, .select:focus, .textarea:focus, .file:focus { border-color: var(--nss-primary); box-shadow: 0 0 0 3px rgba(135,169,107,.25); }
+    .textarea { height:100px; }
+    .counter { color:var(--nss-muted); margin-top:8px; }
+    .gallery-wrap { max-width:1100px; margin:20px auto 60px; padding:0 10px; }
+    .gallery-grid { display:flex; flex-wrap:wrap; justify-content:center; gap:16px; }
+    .g-card { position:relative; width:220px; background:#fff; border:1px solid var(--nss-border); border-radius:12px; overflow:hidden; box-shadow:0 8px 20px rgba(0,0,0,.05); transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
+    .g-card:hover { transform:translateY(-4px); box-shadow:0 12px 26px rgba(0,0,0,.08); border-color: rgba(135,169,107,.8); }
+    .g-img { width:100%; height:150px; object-fit:cover; display:block; }
+    .g-body { padding:10px 12px; }
+    .g-title { margin:0 0 6px; font-size:14px; font-weight:700; color:var(--nss-text); }
+    .g-desc { margin:0; font-size:12px; color:var(--nss-muted); min-height:30px; }
+    .badge { position:absolute; top:8px; left:8px; background:linear-gradient(135deg, var(--nss-primary), var(--nss-accent)); color:#fff; font-size:11px; padding:4px 8px; border-radius:999px; box-shadow:0 4px 10px rgba(90,122,74,.25); }
+    .del-btn { position:absolute; top:6px; right:6px; background:#ff4444; color:#fff; border:none; border-radius:50%; width:26px; height:26px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 6px 16px rgba(255,68,68,.35); }
+    @media (max-width:600px){ .form-row { flex-direction:column; } .upload-card { margin:20px 10px; padding:18px; } }
+  </style>
+</head>
+<body>
+  
+  <main style="padding:30px 20px; text-align:center;">
+    <div class="admin-header">
+      <h1 class="admin-title">👨‍💻 NSS Admin Dashboard</h1>
+    </div>
+    <div class="admin-actions">
+      <button onclick="showAdminSection()" class="btn btn-primary">🔐 Admin Login</button>
+    </div>
+
+    <div id="admin-section" style="display:none;">
+      <!-- Gallery Photo Upload Section -->
+      <section id="gallery-upload" class="upload-card">
+        <div class="upload-head">
+          <h2 class="upload-title">📤 Upload Gallery Photos</h2>
+          <span class="counter" id="photo-count">Currently uploaded: 0 photos</span>
+        </div>
+        <p class="hint">Choose <strong>Gallery (Slideshow)</strong> to feature on the homepage slideshow, or <strong>NSS Logo (Header)</strong> to update the header logo only.</p>
+        <form id="galleryUploadForm" enctype="multipart/form-data">
+          <div class="form-row" style="margin-bottom:12px;">
+            <input class="input" type="text" name="title" placeholder="Photo Title" required>
+            <select class="select" name="category" required>
+            <option value="">Select Category</option>
+            <option value="gallery">Gallery (Slideshow)</option>
+            <option value="logo">NSS Logo (Header)</option>
+            <option value="education">Education</option>
+            <option value="health">Health</option>
+            <option value="environment">Environment</option>
+            <option value="community">Community</option>
+            </select>
+          </div>
+          <div class="form-row" style="margin-bottom:12px;">
+            <textarea class="textarea" name="description" placeholder="Photo Description"></textarea>
+            <input class="file" type="file" name="photo" accept="image/jpeg,image/png,image/gif" required>
+          </div>
+          <div class="form-row">
+            <button type="submit" class="btn btn-primary">Upload Photo</button>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <h2 style="margin-top:20px;">📸 Manage Gallery Photos</h2>
+    <div class="gallery-wrap">
+      <div class="gallery-grid" id="gallery-grid"></div>
+    </div>
+  </main>
+  
+
+  <script>
+    const ADMIN_PASSWORD = 'nssadmin123';
+    let isAdmin = false;
+    
+    // Show admin section after password validation
+    function showAdminSection() {
+      const entered = prompt('Enter admin password:');
+      if (entered === ADMIN_PASSWORD) {
+        document.getElementById('admin-section').style.display = 'block';
+        isAdmin = true;
+        updatePhotoCount();
+        loadGallery(); // Reload gallery to show delete buttons
+      } else if (entered !== null) {
+        alert('❌ Incorrect password!');
+      }
+    }
+
+    // Load and display gallery photos
+    async function loadGallery() {
+      try {
+        const res = await fetch('http://localhost:5000/api/photos');
+        const photos = await res.json();
+        const grid = document.getElementById('gallery-grid');
+        
+        grid.innerHTML = photos.map(p => `
+          <div class='g-card'>
+            <img class='g-img' src='http://localhost:5000${p.imageUrl}' alt='${p.title}'>
+            <span class='badge'>${(p.category || '').toUpperCase()}</span>
+            ${isAdmin ? `
+              <button class='del-btn' onclick="deletePhoto('${p._id}')">×</button>
+            ` : ''}
+            <div class='g-body'>
+              <h4 class='g-title'>${p.title}</h4>
+              <p class='g-desc'>${p.description || ''}</p>
+            </div>
+          </div>
+        `).join('');
+        
+        updatePhotoCount(photos.length);
+      } catch (err) {
+        console.error('Error loading gallery:', err);
+      }
+    }
+
+    // Update the photo count display
+    function updatePhotoCount(count) {
+      const photoCount = document.getElementById('photo-count');
+      if (photoCount) {
+        photoCount.textContent = `Currently uploaded: ${count || 0} photos`;
+      }
+    }
+
+    // Handle gallery photo upload
+    document.getElementById('galleryUploadForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      try {
+        // Show loading state
+        const submitButton = e.target.querySelector('button[type="submit"]');
+        const originalButtonText = submitButton.textContent;
+        submitButton.disabled = true;
+        submitButton.textContent = 'Uploading...';
+
+        // Check if server is accessible
+        try {
+          const serverCheck = await fetch('http://localhost:5000/api/photos');
+          if (!serverCheck.ok) {
+            throw new Error('Server not responding');
+          }
+        } catch (error) {
+          throw new Error('Cannot connect to server. Please make sure the server is running at http://localhost:5000');
+        }
+
+        // Validate form data
+        const formData = new FormData(e.target);
+        if (!formData.get('photo').size) {
+          throw new Error('Please select a photo to upload');
+        }
+
+        // No maximum photo constraint
+
+        // Upload photo
+        const uploadRes = await fetch('http://localhost:5000/api/upload', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!uploadRes.ok) {
+          throw new Error(`Server error: ${uploadRes.status}`);
+        }
+
+        const data = await uploadRes.json();
+        if (data.success) {
+          alert('✅ Photo uploaded successfully!');
+          e.target.reset();
+          loadGallery();
+        } else {
+          throw new Error(data.message || 'Upload failed');
+        }
+      } catch (err) {
+        alert(`❌ ${err.message}`);
+        console.error('Error uploading photo:', err);
+      } finally {
+        // Reset button state
+        const submitButton = e.target.querySelector('button[type="submit"]');
+        submitButton.disabled = false;
+        submitButton.textContent = 'Upload Photo';
+      }
+    });
+
+    // Handle photo deletion
+    async function deletePhoto(photoId) {
+      if (!confirm('Are you sure you want to delete this photo?')) {
+        return;
+      }
+      
+      try {
+        const res = await fetch(`http://localhost:5000/api/photos/${photoId}`, {
+          method: 'DELETE'
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+          alert('✅ Photo deleted successfully!');
+          loadGallery();
+        } else {
+          alert('❌ Failed to delete photo!');
+        }
+      } catch (err) {
+        alert('❌ Failed to delete photo!');
+        console.error('Error deleting photo:', err);
+      }
+    }
+
+    // Initial load
+    loadGallery();
+  </script>
+</body>
+</html>

@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NSS - National Service Scheme | IIIT-NR Unit</title>
+    <meta name="description" content="Official website of the National Service Scheme (NSS) IIIT-Naya Raipur unit - dedicated to community service and social development.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="styles/main.css">
+    
+    <!-- Events Section (scoped) styles -->
+    <style>
+        /* Scope to .events-section to avoid overriding global styles */
+        .events-section {
+            padding: 60px 0;
+            background: linear-gradient(135deg, #F7F9F5 0%, #F0F4ED 100%);
+        }
+        .events-section .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        .events-section .section-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #2D3A2D;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #4A5A3A, #5A7A4A);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .events-section .section-subtitle {
+            font-size: 1.125rem;
+            color: #6B7A5A;
+            max-width: 600px;
+            margin: 0 auto;
+            font-weight: 500;
+        }
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        .event-card {
+            background: rgba(255, 255, 255, 0.9);
+            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(74, 90, 58, 0.1);
+            border: 1px solid rgba(74, 90, 58, 0.2);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            cursor: pointer;
+        }
+        .event-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(74, 90, 58, 0.2);
+        }
+        .event-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #87A96B, #5A7A4A);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: white;
+        }
+        .event-content { padding: 25px; }
+        .event-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+            gap: 15px;
+        }
+        .event-category {
+            display: inline-block;
+            background: rgba(135, 169, 107, 0.1);
+            color: #5A7A4A;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .event-date {
+            background: linear-gradient(135deg, #87A96B, #5A7A4A);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .event-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2D3A2D;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+        .event-excerpt {
+            color: #6B7A5A;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        .event-meta {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            padding-top: 15px;
+            border-top: 1px solid rgba(135, 169, 107, 0.2);
+        }
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #6B7A5A;
+            font-size: 0.85rem;
+        }
+        .ask-ai-btn {
+            width: 100%;
+            padding: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 15px;
+        }
+        .ask-ai-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        /* AI Modal */
+        .ai-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 1000; -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px); }
+        .ai-modal.active { display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .ai-modal-content { background: white; border-radius: 20px; max-width: 700px; width: 100%; max-height: 90vh; overflow-y: auto; position: relative; }
+        .ai-modal-header { background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 25px 30px; border-radius: 20px 20px 0 0; position: sticky; top: 0; z-index: 10; }
+        .ai-modal-title { display: flex; align-items: center; gap: 12px; font-size: 1.4rem; font-weight: 700; margin-bottom: 8px; }
+        .ai-subtitle { font-size: 0.9rem; opacity: 0.9; }
+        .close-modal { position: absolute; top: 20px; right: 20px; background: rgba(255, 255, 255, 0.2); border: none; width: 35px; height: 35px; border-radius: 50%; color: white; font-size: 1.5rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .ai-modal-body { padding: 30px; }
+        .ai-thinking { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 40px; }
+        .spinner { width: 50px; height: 50px; border: 4px solid rgba(102, 126, 234, 0.2); border-top-color: #667eea; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .ai-response { animation: fadeIn 0.5s ease; }
+        .response-section { margin-bottom: 25px; }
+        .response-section h3 { color: #2D3A2D; font-size: 1.2rem; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .response-section p { color: #6B7A5A; line-height: 1.7; margin-bottom: 10px; }
+        .response-section ul { list-style: none; padding: 0; }
+        .response-section li { color: #6B7A5A; padding: 8px 0; padding-left: 25px; position: relative; }
+        .response-section li::before { content: '✓'; position: absolute; left: 0; color: #87A96B; font-weight: bold; }
+        .highlight-box { background: rgba(135, 169, 107, 0.1); border-left: 4px solid #87A96B; padding: 15px; border-radius: 8px; margin: 15px 0; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 15px; }
+        .stat-box { background: linear-gradient(135deg, #87A96B, #5A7A4A); color: white; padding: 15px; border-radius: 12px; text-align: center; }
+        .stat-number { font-size: 1.8rem; font-weight: 700; display: block; }
+        .stat-label { font-size: 0.85rem; opacity: 0.9; }
+        /* Timeline */
+        .timeline { display: grid; gap: 16px; margin-top: 10px; }
+        .timeline-item { display: flex; align-items: center; gap: 12px; background: rgba(135,169,107,0.08); border: 1px solid rgba(135,169,107,0.2); padding: 12px 14px; border-radius: 10px; }
+        .timeline-year { background: linear-gradient(135deg,#87A96B,#5A7A4A); color:#fff; font-weight:700; padding: 6px 10px; border-radius: 8px; min-width: 72px; text-align: center; }
+        .timeline-text { color:#2D3A2D; font-weight:600; }
+        /* Upcoming */
+        .upcoming-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 14px; }
+        .upcoming-card { background: #fff; border: 1px solid rgba(74,90,58,0.2); border-radius: 12px; padding: 18px; box-shadow: 0 8px 24px rgba(74,90,58,0.08); }
+        .upcoming-title { font-weight: 700; color:#2D3A2D; margin-bottom: 6px; }
+        .upcoming-meta { color:#6B7A5A; font-size: 0.9rem; }
+        @media (max-width: 768px) {
+            .events-grid { grid-template-columns: 1fr; }
+            .events-section .section-title { font-size: 2rem; }
+            .ai-modal-content { border-radius: 12px; max-height: 95vh; }
+            .ai-modal-body { padding: 20px; }
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Print styles: print only Achievements section cleanly */
+        @media print {
+            /* Hide everything by default */
+            body * { visibility: hidden !important; }
+            /* Show only the achievements section content */
+            #achievements, #achievements * { visibility: visible !important; }
+            /* Position the achievements section at the top-left for print */
+            #achievements { position: absolute; left: 0; top: 0; width: 100%; }
+            /* Remove shadows, gradients for clean print */
+            .achievements .achievement-card { box-shadow: none !important; border: 1px solid #ccc !important; }
+            .achievements .section-header { margin-bottom: 16px !important; }
+            /* Avoid card splits across pages */
+            .achievements .achievement-card { break-inside: avoid; page-break-inside: avoid; }
+            .achievements .achievements-grid { gap: 12px !important; }
+            /* Hide the print button itself */
+            .achievements-print, .achievements-print * { display: none !important; }
+            /* Optional: Page margins */
+            @page { margin: 16mm; }
+        }
+    </style>
+    
+    <!-- Favicon placeholder -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤝</text></svg>">
+</head>
+<body>
+    <!-- Skip to content link for accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    <!-- Preloader -->
+    <div id="preloader" class="preloader">
+        <div class="preloader-logo">
+            <div class="nss-circle">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/National_Service_Scheme_logo.svg/512px-National_Service_Scheme_logo.svg.png" alt="NSS Logo" class="preloader-logo-img">
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header" id="header">
+        <nav class="nav container">
+            <div class="nav-brand">
+                <div class="logo">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/National_Service_Scheme_logo.svg/512px-National_Service_Scheme_logo.svg.png" alt="NSS Logo" class="logo-img">
+                </div>
+                <h1 class="site-title">NSS IIIT-Naya Raipur Unit</h1>
+            </div>
+            
+            <ul class="nav-menu" id="nav-menu">
+                <li class="nav-item">
+                    <a href="#home" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#gallery" class="nav-link">Photo Gallery</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#initiatives" class="nav-link">Initiatives</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#achievements" class="nav-link">Achievements</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#about" class="nav-link">About</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#contact" class="nav-link">Contact</a>
+                </li>
+                <li class="nav-item">
+                    <a href="admin.html" class="nav-link btn btn-outline" target="_blank" rel="noopener noreferrer">Admin Login</a>
+                </li>
+            </ul>
+            
+            <div class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation menu">
+                <span class="hamburger"></span>
+                <span class="hamburger"></span>
+                <span class="hamburger"></span>
+            </div>
+        </nav>
+    </header>
+
+    <style>
+        .hero-slideshow {
+            flex: 1;
+            position: relative;
+            max-width: 600px;
+            height: 400px;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .slideshow-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 16px;
+        }
+
+        .slideshow-nav button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            font-size: 18px;
+            border-radius: 50%;
+            transition: background 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+        }
+
+        .slideshow-nav button:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .prev {
+            left: 10px;
+        }
+
+        .next {
+            right: 10px;
+        }
+
+        .dots-container {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 2;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .dot.active {
+            background: white;
+            transform: scale(1.2);
+        }
+    </style>
+
+    <!-- Main Content -->
+    <main id="main-content">
+    <script>
+        // Initialize slideshow variables
+        let slideIndex = 0;
+        let slides = [];
+        let dots = [];
+        let slideshowInterval;
+
+        // Load and initialize slideshow
+        async function loadSlideshow() {
+            try {
+                const response = await fetch('http://localhost:5000/api/photos');
+                const photos = await response.json();
+                // Filter for gallery images
+                const slideshowPhotos = photos.filter(p => p.category === 'gallery');
+                
+                const container = document.querySelector('.slideshow-container');
+                const dotsContainer = document.querySelector('.dots-container');
+                
+                if (slideshowPhotos.length === 0) {
+                    container.innerHTML = `
+                        <div class="slide active">
+                            <img src="assets/placeholder/hero-image.jpg" alt="NSS volunteers in community service">
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Create slides
+                container.innerHTML = slideshowPhotos.map((photo, index) => `
+                    <div class="slide ${index === 0 ? 'active' : ''}">
+                        <img src="http://localhost:5000${photo.imageUrl}" alt="${photo.title || 'NSS Activity'}">
+                    </div>
+                `).join('');
+
+                // Create navigation dots
+                dotsContainer.innerHTML = slideshowPhotos.map((_, index) => `
+                    <div class="dot ${index === 0 ? 'active' : ''}" onclick="currentSlide(${index})"></div>
+                `).join('');
+
+                // Store slides and dots references
+                slides = document.querySelectorAll('.slide');
+                dots = document.querySelectorAll('.dot');
+
+                // Start automatic slideshow if there's more than one image
+                if (slides.length > 1) {
+                    startSlideshow();
+                }
+            } catch (error) {
+                console.error('Error loading slideshow:', error);
+            }
+        }
+
+        function showSlide(n) {
+            slideIndex = n;
+            if (slideIndex >= slides.length) slideIndex = 0;
+            if (slideIndex < 0) slideIndex = slides.length - 1;
+
+            slides.forEach(slide => slide.classList.remove('active'));
+            dots.forEach(dot => dot.classList.remove('active'));
+
+            slides[slideIndex].classList.add('active');
+            dots[slideIndex].classList.add('active');
+        }
+
+        function moveSlide(n) {
+            clearInterval(slideshowInterval);
+            showSlide(slideIndex + n);
+            startSlideshow();
+        }
+
+        function currentSlide(n) {
+            clearInterval(slideshowInterval);
+            showSlide(n);
+            startSlideshow();
+        }
+
+        function startSlideshow() {
+            clearInterval(slideshowInterval);
+            slideshowInterval = setInterval(() => {
+                moveSlide(1);
+            }, 5000); // Change slide every 5 seconds
+        }
+
+        // Initialize slideshow when page loads
+        document.addEventListener('DOMContentLoaded', loadSlideshow);
+    </script>
+        <!-- Hero Section -->
+        <section id="home" class="hero">
+            <!-- Floating Bubbles -->
+            <div class="bubble bubble-1"></div>
+            <div class="bubble bubble-2"></div>
+            <div class="bubble bubble-3"></div>
+            <div class="bubble bubble-4"></div>
+            <div class="bubble bubble-5"></div>
+            <div class="bubble bubble-6"></div>
+            
+            <div class="hero-content container">
+                <div class="hero-text">
+                    <h2 class="hero-title">National Service Scheme</h2>
+                    <p class="hero-subtitle">Empowering communities through service, education, and social development at IIIT-Naya Raipur.</p>
+                    <div class="hero-cta">
+                        <a href="#initiatives" class="btn btn-primary">Our Initiatives</a>
+                        <a href="#gallery" class="btn btn-secondary">View Gallery</a>
+                    </div>
+                </div>
+                <div class="hero-slideshow">
+                    <div class="slideshow-container">
+                        <!-- Slides will be dynamically added here -->
+                    </div>
+                    <div class="slideshow-nav">
+                        <button class="prev" onclick="moveSlide(-1)">&#10094;</button>
+                        <button class="next" onclick="moveSlide(1)">&#10095;</button>
+                    </div>
+                    <div class="dots-container"></div>
+                </div>
+            </div>
+            <div class="hero-scroll">
+                <div class="scroll-indicator">
+                    <span>Scroll to explore</span>
+                    <div class="scroll-arrow"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Photo Gallery Section -->
+        <section id="gallery" class="gallery section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Photo Gallery</h2>
+                    <p class="section-subtitle">Capturing moments of service, empowerment, and community impact</p>
+                </div>
+                
+                <div class="gallery-filters">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="education">Education</button>
+                    <button class="filter-btn" data-filter="health">Health</button>
+                    <button class="filter-btn" data-filter="environment">Environment</button>
+                    <button class="filter-btn" data-filter="community">Community</button>
+                </div>
+                
+                <div class="gallery-grid" id="gallery-grid">
+                    <!-- Gallery items will be dynamically loaded from the admin backend -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Initiatives Section -->
+        <section id="initiatives" class="initiatives section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Our Initiatives</h2>
+                    <p class="section-subtitle">Making a difference through our initiatives for the community</p>
+                </div>
+                
+                <div class="initiatives-tabs">
+                    <button class="tab-btn active" data-tab="ongoing">Ongoing</button>
+                    <button class="tab-btn" data-tab="past">Past</button>
+                </div>
+                
+                <div class="initiatives-content">
+                    <div class="tab-content active" id="ongoing">
+                        <div class="initiatives-grid">
+                            <div class="initiative-card" data-aos="fade-up">
+                                <div class="card-icon">
+                                    <div class="initiative-symbol">💻</div>
+                                </div>
+                                <h3 class="card-title">Digital Literacy Program</h3>
+                                <p class="card-desc">IIIT-NR students teaching basic computer skills and digital awareness to underprivileged youth in nearby communities, leveraging our technical expertise.</p>
+                                <div class="card-status">Ongoing</div>
+                            </div>
+                            
+                            <div class="initiative-card" data-aos="fade-up" data-aos-delay="100">
+                                <div class="card-icon">
+                                    <div class="initiative-symbol">🏥</div>
+                                </div>
+                                <h3 class="card-title">Health Awareness Campaign</h3>
+                                <p class="card-desc">Regular health checkups and awareness sessions on hygiene, nutrition, and preventive healthcare.</p>
+                                <div class="card-status">Ongoing</div>
+                            </div>
+                            
+                            <div class="initiative-card" data-aos="fade-up" data-aos-delay="200">
+                                <div class="card-icon">
+                                    <div class="initiative-symbol">🌱</div>
+                                </div>
+                                <h3 class="card-title">Green Campus Initiative</h3>
+                                <p class="card-desc">Sustainable practices, waste management, and environmental education programs along with cleaning drives within the IIIT-NR campus, promoting eco-friendly technology solutions.</p>
+                                <div class="card-status">Ongoing</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="past">
+                        <div class="initiatives-grid">
+                            <div class="initiative-card" data-aos="fade-up">
+                                <div class="card-icon">
+                                    <div class="initiative-symbol">🚑</div>
+                                </div>
+                                <h3 class="card-title">COVID-19 Relief Drive</h3>
+                                <p class="card-desc">Distributed essential supplies, masks, and provided support, awareness sessions to affected families during the pandemic.</p>
+                                <div class="card-status completed">Completed</div>
+                            </div>
+                            
+                            <div class="initiative-card" data-aos="fade-up" data-aos-delay="100">
+                                <div class="card-icon">
+                                    <div class="initiative-symbol">📖</div>
+                                </div>
+                                <h3 class="card-title">Rural School Support</h3>
+                                <p class="card-desc">Provided books, stationery, and educational materials as well as teaching assistance to schools in nearby rural areas.</p>
+                                <div class="card-status completed">Completed</div>
+                            </div>
+                            
+                            <div class="initiative-card" data-aos="fade-up" data-aos-delay="200">
+                                <div class="card-icon">
+                                    <div class="initiative-symbol">💉</div>
+                                </div>
+                                <h3 class="card-title">Blood Donation Camp</h3>
+                                <p class="card-desc">Organized multiple blood donation camps in collaboration with local hospitals and blood banks for the needy.</p>
+                                <div class="card-status completed">Completed</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Achievements Section -->
+        <section id="achievements" class="achievements section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Achievements & Recognition</h2>
+                    <p class="section-subtitle">Celebrating our impact and milestones in community service and social development</p>
+                </div>
+                
+                <div class="achievements-grid">
+                    <!-- National/Regional Recognition -->
+                    <div class="achievement-card" data-aos="fade-up">
+                        <div class="achievement-year">2024</div>
+                        <h3 class="achievement-title">University-Level Excellence Award</h3>
+                        <p class="achievement-desc">Recognized by IIIT-NR for exceptional social outreach and campus impact through NSS initiatives.</p>
+                    </div>
+                    
+                    <div class="achievement-card" data-aos="fade-up" data-aos-delay="100">
+                        <div class="achievement-year">2023</div>
+                        <h3 class="achievement-title">State-Level NSS Appreciation</h3>
+                        <p class="achievement-desc">Commended by the Chhattisgarh NSS Directorate for exemplary contribution in rural development programs.</p>
+                    </div>
+                    
+                    <!-- Innovation & Technology in Service -->
+                    <div class="achievement-card" data-aos="fade-up" data-aos-delay="200">
+                        <div class="achievement-year">2024</div>
+                        <h3 class="achievement-title">Tech for Social Good Award</h3>
+                        <p class="achievement-desc">Honored for integrating IoT and AI-based solutions in community safety and environmental monitoring.</p>
+                    </div>
+                    
+                    <div class="achievement-card" data-aos="fade-up" data-aos-delay="300">
+                        <div class="achievement-year">2023</div>
+                        <h3 class="achievement-title">Digital Literacy Drive Recognition</h3>
+                        <p class="achievement-desc">Successfully trained 500+ villagers in digital literacy and e-governance awareness.</p>
+                    </div>
+                    
+                    <!-- Environmental & Sustainability Awards -->
+                    <div class="achievement-card" data-aos="fade-up" data-aos-delay="400">
+                        <div class="achievement-year">2023</div>
+                        <h3 class="achievement-title">Swachh Campus Award</h3>
+                        <p class="achievement-desc">Recognized for leading cleanliness and waste segregation initiatives on campus and nearby areas.</p>
+                    </div>
+                    
+                    <div class="achievement-card" data-aos="fade-up" data-aos-delay="500">
+                        <div class="achievement-year">2022–2024</div>
+                        <h3 class="achievement-title">Tree Plantation Milestone</h3>
+                        <p class="achievement-desc">Planted and maintained over 2000 trees across adopted villages and campus premises.</p>
+                    </div>
+                    
+                    <!-- Collaborations & Partnerships -->
+                    <div class="achievement-card" data-aos="fade-up" data-aos-delay="600">
+                        <div class="achievement-year">2024</div>
+                        <h3 class="achievement-title">Collaboration with NGOs</h3>
+                        <p class="achievement-desc">Partnered with local NGOs for rural education and environmental projects.</p>
+                    </div>
+                    
+                    <div class="achievement-card" data-aos="fade-up" data-aos-delay="700">
+                        <div class="achievement-year">2023–ongoing</div>
+                        <h3 class="achievement-title">Adopted Village Development Project</h3>
+                        <p class="achievement-desc">Adopted a nearby village under the NSS banner for continuous developmental activities.</p>
+                    </div>
+                    
+                    <!-- Student Leadership & Participation -->
+                    <div class="achievement-card" data-aos="fade-up" data-aos-delay="800">
+                        <div class="achievement-year">Annual</div>
+                        <h3 class="achievement-title">Outstanding Volunteer Award</h3>
+                        <p class="achievement-desc">Awarded to top-performing NSS volunteers for dedication and leadership.</p>
+                    </div>
+                    
+                    <div class="achievement-card" data-aos="fade-up" data-aos-delay="900">
+                        <div class="achievement-year">2024</div>
+                        <h3 class="achievement-title">Best Team Initiative</h3>
+                        <p class="achievement-desc">Recognized student-led group project addressing social or environmental challenges.</p>
+                    </div>
+                </div>
+                
+                <div class="achievements-print">
+                    <button class="btn btn-outline" onclick="window.print()">Print Achievements</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Events Section -->
+        <section id="events" class="events-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Key Projects / Flagship Initiatives</h2>
+                    <p class="section-subtitle">Our anchor programs driving measurable community impact</p>
+                </div>
+                <div class="events-grid">
+                    <div class="event-card" onclick="openAIModal(project1Data)">
+                        <div class="event-image">🏘️</div>
+                        <div class="event-content">
+                            <div class="event-header">
+                                <span class="event-category">Community</span>
+                                <span class="event-date">Ongoing</span>
+                            </div>
+                            <h3 class="event-title">Adopted Village – Bendri Development</h3>
+                            <p class="event-excerpt">Working with Bendri to improve education, health, sanitation, and basic facilities.</p>
+                            <div class="event-meta">
+                                <div class="meta-item">📍 Bendri Village</div>
+                                <div class="meta-item">📈 200 beneficiaries</div>
+                            </div>
+                            <button class="ask-ai-btn">🤖 Ask AI for Details</button>
+                        </div>
+                    </div>
+                    <div class="event-card" onclick="openAIModal(project2Data)">
+                        <div class="event-image">🌿</div>
+                        <div class="event-content">
+                            <div class="event-header">
+                                <span class="event-category">Environment</span>
+                                <span class="event-date">2023–Ongoing</span>
+                            </div>
+                            <h3 class="event-title">Green Campus – Zero Plastic</h3>
+                            <p class="event-excerpt">Campus-wide zero-plastic operations with audits, awareness, and reusable alternatives deployment.</p>
+                            <div class="event-meta">
+                                <div class="meta-item">🏫 IIIT-NR Campus</div>
+                                <div class="meta-item">🧩 15 kg plastic eliminated</div>
+                            </div>
+                            <button class="ask-ai-btn">🤖 Ask AI for Details</button>
+                        </div>
+                    </div>
+                    <div class="event-card" onclick="openAIModal(project3Data)">
+                        <div class="event-image">🏥</div>
+                        <div class="event-content">
+                            <div class="event-header">
+                                <span class="event-category">Health</span>
+                                <span class="event-date">Quarterly</span>
+                            </div>
+                            <h3 class="event-title">Health for All – Free Checkup Camp</h3>
+                            <p class="event-excerpt">Free health screenings with nutrition, hygiene, and preventive care awareness in nearby communities.</p>
+                            <div class="event-meta">
+                                <div class="meta-item">📍 Community Centers</div>
+                                <div class="meta-item">👥 120+ per camp</div>
+                            </div>
+                            <button class="ask-ai-btn">🤖 Ask AI for Details</button>
+                        </div>
+                    </div>
+                    
+                    <div class="event-card" onclick="openAIModal(project5Data)">
+                        <div class="event-image">🧹</div>
+                        <div class="event-content">
+                            <div class="event-header">
+                                <span class="event-category">Community</span>
+                                <span class="event-date">Annual</span>
+                            </div>
+                            <h3 class="event-title">Swachhata Hi Seva Drive</h3>
+                            <p class="event-excerpt">Community clean-up with segregation demos and installing collection points.</p>
+                            <div class="event-meta">
+                                <div class="meta-item">📍 Villages & Campus</div>
+                                <div class="meta-item">🧮 20 kg waste removed</div>
+                            </div>
+                            <button class="ask-ai-btn">🤖 Ask AI for Details</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="response-section" style="margin-top: 10px;">
+                    <h3>🗓️ Timeline / Milestones</h3>
+                    <div class="timeline">
+                        <div class="timeline-item"><span class="timeline-year">2021</span><span class="timeline-text">NSS Unit established</span></div>
+                        <div class="timeline-item"><span class="timeline-year">2022</span><span class="timeline-text">1st Community Impact Award</span></div>
+                        <div class="timeline-item"><span class="timeline-year">2023</span><span class="timeline-text">Green Campus Certification</span></div>
+                        <div class="timeline-item"><span class="timeline-year">2024</span><span class="timeline-text">2000+ Beneficiaries Reached</span></div>
+                    </div>
+                </div>
+
+                <div class="response-section">
+                    <h3>📅 Upcoming Events</h3>
+                    <div class="upcoming-grid">
+                        <div class="upcoming-card">
+                            <div class="upcoming-title">Blood Donation Drives</div>
+                            <div class="upcoming-meta">Next: Monthly | Venue: College Auditorium | Partner: Regional Blood Bank</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="about section">
+            <div class="container">
+                <div class="about-content">
+                    <div class="about-text">
+                        <h2 class="section-title">About NSS</h2>
+                        <div class="about-nss">
+                            <h3>National Service Scheme</h3>
+                            <p>The National Service Scheme (NSS) is a Central Sector Scheme of Government of India, Ministry of Youth Affairs & Sports. It provides opportunity to the student youth of 11th & 12th Class of schools at +2 Board level and student youth of Technical Institution, Graduate & Post Graduate at colleges and University level of India to take part in various government led community service activities & programmes to make a difference in the society.</p>
+                            
+                            <h4>IIIT-Naya Raipur NSS Unit</h4>
+                            <p>The IIIT-Naya Raipur NSS unit has been actively serving the community since its establishment. With over 200 dedicated student volunteers, we have successfully organized numerous initiatives focusing on education, health, environment, and social welfare. Our unit believes in the power of youth to bring positive change in society through dedicated service, community engagement, and encouragement to leverage the technical expertise of our IIIT-Naya Raipur students.</p>
+                            
+                            <h5>Program Officer</h5>
+                            <div class="program-officer">
+                                <p><strong>Krishnanand Vishwakarma</strong><br>
+                                Program Officer NSS<br>
+                                Assistant Professor (Maths)<br>
+                                IIIT-Naya Raipur</p>
+                            </div>
+                            
+                            <div class="unit-stats">
+                                <div class="stat-item">
+                                    <span class="stat-number">200+</span>
+                                    <span class="stat-label">Active Volunteers</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number">20+</span>
+                                    <span class="stat-label">Initiatives</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number">500+</span>
+                                    <span class="stat-label">Beneficiaries</span>
+                                </div>
+                            </div>
+                            
+                            <h4>Our Motto</h4>
+                            <div class="motto-container">
+                                <blockquote class="motto-quote">"Not Me, But You"</blockquote>
+                            </div>
+                            
+                            <h4>Our Objectives</h4>
+                            <div class="objectives-container">
+                                <div class="objective-card">
+                                    <div class="objective-icon">🌍</div>
+                                    <div class="objective-text">Understand the community in which they work and make a difference in the society</div>
+                                </div>
+                                <div class="objective-card">
+                                    <div class="objective-icon">🤝</div>
+                                    <div class="objective-text">Understand themselves in relation to their community and what they can do to make a difference</div>
+                                </div>
+                                <div class="objective-card">
+                                    <div class="objective-icon">🔍</div>
+                                    <div class="objective-text">Identify the needs and problems of the community and what they can do to solve them</div>
+                                </div>
+                                <div class="objective-card">
+                                    <div class="objective-icon">💪</div>
+                                    <div class="objective-text">Develop among themselves a sense of social and civic responsibility</div>
+                                </div>
+                                <div class="objective-card">
+                                    <div class="objective-icon">💡</div>
+                                    <div class="objective-text">Utilize their knowledge in finding practical solutions to individual and community problem</div>
+                                </div>
+                                <div class="objective-card">
+                                    <div class="objective-icon">👥</div>
+                                    <div class="objective-text">Work in harmony with the community to achieve the common goals and solve their problems</div>
+                                </div>
+                                
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="contact section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Get In Touch</h2>
+                    <p class="section-subtitle">Join us in making a difference in the community and serve the society with your skills and knowledge</p>
+                </div>
+                
+                <div class="contact-content">
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                    <polyline points="22,6 12,13 2,6"></polyline>
+                                </svg>
+                            </div>
+                            <div class="contact-details">
+                                <h3>Email</h3>
+                                <p>nss@iiitnr.edu.in</p>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                            </div>
+                            <div class="contact-details">
+                                <h3>Program Officer</h3>
+                                <p><strong>Krishnanand Vishwakarma</strong><br>
+                                Program Officer NSS<br>
+                                Assistant Professor (Maths)<br>
+                                IIIT-Naya Raipur</p>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                                </svg>
+                            </div>
+                            <div class="contact-details">
+                                <h3>Phone</h3>
+                                <p>91-771-2474053</p>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                    <circle cx="12" cy="10" r="3"></circle>
+                                </svg>
+                            </div>
+                            <div class="contact-details">
+                                <h3>Address</h3>
+                                <p>IIIT–Naya Raipur<br>
+                                    Plot No. 7, Sector 24,<br>
+                                    Near Purkhoti Muktangan,<br>
+                                    Atal Nagar – 493661<br>
+                                    Chhattisgarh</p>
+                            </div>
+                        </div>
+                        
+                        
+                        <div class="social-links">
+                            <h3>Follow Us</h3>
+                            <div class="social-icons">
+                                <a href="https://www.facebook.com/IIITNROfficial/" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Facebook">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                                    </svg>
+                                </a>
+                                <a href="https://www.instagram.com/nss_iiitnr/" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Instagram">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                                    </svg>
+                                </a>
+                                <a href="https://x.com/NSS_IIITNR" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="X (formerly Twitter)">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-form">
+                        <form action="mailto:nss@iiitnr.edu.in" method="post" enctype="text/plain">
+                            <div class="form-group">
+                                <label for="name">Name</label>
+                                <input type="text" id="name" name="name" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" id="email" name="email" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="subject">Subject</label>
+                                <input type="text" id="subject" name="subject" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="message">Message</label>
+                                <textarea id="message" name="message" rows="5" required></textarea>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">Send Message</button>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Map placeholder -->
+                <div class="map-placeholder">
+                    <div class="map-content">
+                        <h3>Find Us📍</h3>
+                        <p>IIIT-NR Campus, Naya Raipur, Chhattisgarh</p>
+                        <!-- Google Maps Embed for IIIT-NR -->
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3721.6009597368843!2d81.76359047554477!3d21.128469384345788!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a28c434ac2ae871%3A0x4e3568497a7e1d7e!2sInternational%20Institute%20of%20Information%20Technology%2C%20Naya%20Raipur!5e0!3m2!1sen!2sin!4v1761237884650!5m2!1sen!2sin" width="100%" height="300" style="border:0; border-radius: 8px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        
+                        <!-- Alternative: Direct link to Google Maps -->
+                        <div class="map-link" style="margin-top: 1rem; text-align: center;">
+                            <a href="https://www.google.com/maps/search/IIIT-NR+Naya+Raipur+Chhattisgarh" target="_blank" class="btn btn-outline" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                    <circle cx="12" cy="10" r="3"></circle>
+                                </svg>
+                                Open in Google Maps
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox" class="lightbox">
+        <div class="lightbox-content">
+            <span class="lightbox-close">&times;</span>
+            <img id="lightbox-img" src="" alt="">
+            <div class="lightbox-caption">
+                <h3 id="lightbox-title"></h3>
+                <p id="lightbox-desc"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back to Top Button -->
+    <button id="backToTop" aria-label="Back to top" title="Back to top" style="position: fixed; right: 20px; bottom: 24px; width: 40px; height: 40px; border-radius: 50%; border: none; background: linear-gradient(135deg, #87A96B, #5A7A4A); color: #fff; box-shadow: 0 8px 24px rgba(74,90,58,0.25); cursor: pointer; display: none; align-items: center; justify-content: center; z-index: 1000; font-size: 18px;">▲</button>
+
+    <!-- AI Chatbox (non-intrusive) -->
+    <button id="nssChatToggle" aria-label="Open chat" title="Help & AI Chat" style="position: fixed; right: 20px; bottom: 80px; width: 54px; height: 54px; border-radius: 50%; border: none; background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; box-shadow: 0 10px 26px rgba(102,126,234,0.35); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; z-index: 1000; font-size: 22px;">💬</button>
+    <div id="nssChatWindow" role="dialog" aria-label="NSS AI chat" style="position: fixed; right: 20px; bottom: 145px; width: 320px; max-width: calc(100% - 40px); height: 420px; border-radius: 14px; background: #ffffff; box-shadow: 0 20px 50px rgba(0,0,0,0.18); display: none; flex-direction: column; overflow: hidden; z-index: 1000; border: 1px solid rgba(0,0,0,0.06);">
+        <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between;">
+            <div style="display:flex; align-items:center; gap:8px; font-weight:700;">
+                <span>🤖</span>
+                <span>NSS AI Assistant</span>
+            </div>
+            <button id="nssChatClose" aria-label="Close chat" style="background: rgba(255,255,255,0.2); color:#fff; border:none; width:28px; height:28px; border-radius:50%; cursor:pointer;">×</button>
+        </div>
+        <div id="nssChatMessages" style="flex:1; padding: 12px; overflow-y: auto; background: #fafbff;">
+            <div style="margin-bottom:10px; display:flex; gap:8px;">
+                <div style="background:#eef2ff; color:#2d3a2d; padding:10px 12px; border-radius: 10px; max-width: 85%;">Hi! I can help with gallery, slideshow, logo, initiatives, events, and contact info. Ask me anything.</div>
+            </div>
+        </div>
+        <form id="nssChatForm" style="display:flex; gap:8px; padding: 10px; border-top: 1px solid rgba(0,0,0,0.08); background:#fff;">
+            <input id="nssChatInput" type="text" placeholder="Type your question..." aria-label="Your message" style="flex:1; padding:10px 12px; border:1px solid #e5e7eb; border-radius:10px; outline:none;" />
+            <button type="submit" style="background:#667eea; color:#fff; border:none; padding: 10px 14px; border-radius: 10px; cursor:pointer; font-weight:600;">Send</button>
+        </form>
+    </div>
+
+    <!-- Scripts -->
+    
+    <!-- AI Modal for Events -->
+    <div id="aiModal" class="ai-modal" aria-hidden="true">
+        <div class="ai-modal-content" role="dialog" aria-modal="true" aria-labelledby="ai-modal-title">
+            <div class="ai-modal-header">
+                <h2 class="ai-modal-title" id="ai-modal-title">
+                    <span class="ai-icon">🤖</span>
+                    <span>AI Event Descriptor</span>
+                </h2>
+                <p class="ai-subtitle">Detailed analysis and summary powered by AI</p>
+                <button class="close-modal" onclick="closeAIModal()" aria-label="Close">×</button>
+            </div>
+            <div class="ai-modal-body" id="aiModalBody">
+                <div class="ai-thinking">
+                    <div class="spinner"></div>
+                    <p>AI is analyzing the event details...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const project1Data = { title: "Adopted Village – Bendri Development", category: "Community", date: "Ongoing", location: "Bendri Village", participants: 200, duration: "Multi-year", volunteers: 40, summary: "Holistic development program focusing on education, health, sanitation, and infrastructure in Bendri village.", objectives: ["Improve access to education and healthcare","Enhance sanitation and hygiene practices","Strengthen local infrastructure and civic systems","Build sustained community participation"], activities: ["Weekly teaching support and mentorship","Monthly health awareness and screening camps","Sanitation drives and waste points setup","Village committee formation and review"], impact: "The program has improved school attendance, hygiene practices, and facilitated access to essential services for families in Bendri.", outcomes: ["200 beneficiaries impacted","5 active village committees","25% rise in school attendance","Regular sanitation schedule adopted"], futurePlans: "Scale successful interventions to adjacent panchayats and deepen digital access." };
+        const project2Data = { title: "Green Campus – Zero Plastic", category: "Environment", date: "2023–Ongoing", location: "IIIT-NR Campus", participants: 150, duration: "Institution-wide", volunteers: 60, summary: "Transition to a zero-plastic campus through audits, awareness, and reusable alternatives.", objectives: ["Eliminate single-use plastics on campus","Deploy reusable and compostable alternatives","Run periodic audits and pledge campaigns","Partner with vendors for compliance"], activities: ["Plastic audits and kiosks","Reusable bottle/ bag distribution","Awareness booths and signage","Vendor MoUs to avoid plastic"], impact: "Significant reduction in plastic waste generation, improved segregation, and culture shift toward sustainability.", outcomes: ["15 kg plastic eliminated","95% outlet compliance","Segregation accuracy up 40%","Campus-wide pledge participation"], futurePlans: "Expand to surrounding communities and establish zero-plastic guidelines for events." };
+        const project3Data = { title: "Health for All – Free Checkup Camp", category: "Health", date: "Quarterly", location: "Community Centers", participants: 120, duration: "6 hours", volunteers: 20, summary: "Free screenings and preventive care awareness for underserved communities.", objectives: ["Provide basic screenings and referrals","Increase preventive care awareness","Offer nutrition and hygiene counseling","Maintain follow-up records"], activities: ["BP/BS/BMI checks","Doctor consultations","Nutrition and hygiene sessions","Medicine distribution"], impact: "Early detection and improved health literacy in target communities with timely referrals.", outcomes: ["120+ screened each camp","15+ referrals per camp","Personalized advisories for all","Medicine kit distribution"], futurePlans: "Create a recurring roster and digital records for longitudinal follow-up." };
+        const project5Data = { title: "Swachhata Hi Seva Drive", category: "Community", date: "Annual", location: "Villages & Campus", participants: 300, duration: "Full Day", volunteers: 50, summary: "Community clean-ups with waste segregation demonstrations and installing collection points.", objectives: ["Clean public spaces and water bodies","Promote segregation at source","Install waste collection points","Mobilize community participation"], activities: ["Street and public area cleanup","Segregation demonstrations","Bin installation and signage","Painting awareness murals"], impact: "Notable improvement in cleanliness with sustained community ownership and periodic follow-ups.", outcomes: ["20 kilos waste removed","10 collection points installed","110+ active local participants","Cleanliness committee formed"], futurePlans: "Monthly micro-drives and door-to-door collection pilots." };
+
+        function openAIModal(eventData) {
+            const modal = document.getElementById('aiModal');
+            const modalBody = document.getElementById('aiModalBody');
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            modalBody.innerHTML = '<div class="ai-thinking"><div class="spinner"></div><p>AI is analyzing the event details...</p></div>';
+            setTimeout(() => {
+                modalBody.innerHTML = `
+                    <div class="ai-response">
+                        <div class="response-section">
+                            <h3>📋 Event Overview</h3>
+                            <p><strong>${eventData.title}</strong> was held on ${eventData.date} at ${eventData.location}. ${eventData.summary}</p>
+                        </div>
+                        <div class="stats-grid">
+                            <div class="stat-box"><span class="stat-number">${eventData.participants}</span><span class="stat-label">Participants</span></div>
+                            <div class="stat-box"><span class="stat-number">${eventData.volunteers}</span><span class="stat-label">Volunteers</span></div>
+                            <div class="stat-box"><span class="stat-number">${eventData.duration}</span><span class="stat-label">Duration</span></div>
+                        </div>
+                        <div class="response-section">
+                            <h3>🎯 Key Objectives</h3>
+                            <ul>${eventData.objectives.map(obj => `<li>${obj}</li>`).join('')}</ul>
+                        </div>
+                        <div class="response-section">
+                            <h3>⚡ Activities Conducted</h3>
+                            <ul>${eventData.activities.map(act => `<li>${act}</li>`).join('')}</ul>
+                        </div>
+                        <div class="highlight-box">
+                            <h3>💡 Impact & Significance</h3>
+                            <p>${eventData.impact}</p>
+                        </div>
+                        <div class="response-section">
+                            <h3>✅ Key Outcomes</h3>
+                            <ul>${eventData.outcomes.map(out => `<li>${out}</li>`).join('')}</ul>
+                        </div>
+                        <div class="response-section">
+                            <h3>🚀 Future Plans</h3>
+                            <p>${eventData.futurePlans}</p>
+                        </div>
+                    </div>`;
+            }, 600);
+        }
+
+        function closeAIModal() {
+            const modal = document.getElementById('aiModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Prevent nested button default navigation bubbling if needed
+        document.addEventListener('click', function(e) {
+            const btn = e.target.closest('.ask-ai-btn');
+            if (btn) {
+                e.stopPropagation();
+                // Determine parent card and open respective data by traversing
+                const card = btn.closest('.event-card');
+                if (!card) return;
+                const index = Array.from(card.parentElement.children).indexOf(card);
+                const datasets = [project1Data, project2Data, project3Data, project5Data];
+                openAIModal(datasets[index] || project1Data);
+            }
+        });
+    </script>
+    <script src="scripts/main.js"></script>
+    <script>
+        // Load photos from backend and append to gallery
+        (async function loadBackendPhotos() {
+            try {
+                const res = await fetch('http://localhost:5000/api/photos');
+                const photos = await res.json();
+                const grid = document.getElementById('gallery-grid');
+                if (!grid || !Array.isArray(photos)) return;
+                // Filter out slideshow (gallery) and logo photos - they should only appear in their respective sections
+                const galleryPhotos = photos.filter(p => {
+                    const c = (p.category || '').toLowerCase();
+                    return c !== 'gallery' && c !== 'logo';
+                });
+                const fragment = document.createDocumentFragment();
+                galleryPhotos.forEach(p => {
+                    const item = document.createElement('div');
+                    item.className = 'gallery-item';
+                    item.setAttribute('data-category', (p.category || 'community').toLowerCase());
+                    item.innerHTML = `
+                        <img src="http://localhost:5000${p.imageUrl}" alt="${p.title}" class="gallery-img">
+                        <div class="gallery-overlay">
+                            <h3 class="gallery-title">${p.title}</h3>
+                            <p class="gallery-desc">${p.description || ''}</p>
+                        </div>`;
+                    fragment.appendChild(item);
+                });
+                grid.appendChild(fragment);
+                if (window.initializeDynamicGalleryItems) {
+                    window.initializeDynamicGalleryItems();
+                }
+            } catch (e) {
+                console.warn('Failed to load backend photos', e);
+            }
+        })();
+        
+        // Load latest NSS Logo into header .logo img
+        (async function loadNSSLogo() {
+            try {
+                const res = await fetch('http://localhost:5000/api/photos');
+                const photos = await res.json();
+                if (!Array.isArray(photos)) return;
+                const logos = photos.filter(p => (p.category || '').toLowerCase() === 'logo');
+                if (logos.length === 0) return;
+                const latestLogo = logos[0]; // backend returns sorted desc by uploadedAt
+                const logoImg = document.querySelector('.logo img');
+                if (logoImg && latestLogo.imageUrl) {
+                    logoImg.src = `http://localhost:5000${latestLogo.imageUrl}`;
+                    logoImg.alt = latestLogo.title || 'NSS Logo';
+                }
+            } catch (e) {
+                console.warn('Failed to load NSS logo', e);
+            }
+        })();
+
+        // Back to Top: show after leaving the home section
+        (function initBackToTop(){
+            const btn = document.getElementById('backToTop');
+            const home = document.getElementById('home');
+            if (!btn || !home) return;
+
+            function toggle(){
+                const threshold = home.offsetTop + home.offsetHeight - 10;
+                btn.style.display = (window.scrollY > threshold) ? 'flex' : 'none';
+            }
+
+            window.addEventListener('scroll', toggle, { passive: true });
+            window.addEventListener('resize', toggle);
+            toggle();
+
+            btn.addEventListener('click', function(){
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        })();
+
+        // NSS AI Chatbox
+        (function initNSSChat(){
+            const toggle = document.getElementById('nssChatToggle');
+            const win = document.getElementById('nssChatWindow');
+            const closeBtn = document.getElementById('nssChatClose');
+            const form = document.getElementById('nssChatForm');
+            const input = document.getElementById('nssChatInput');
+            const messages = document.getElementById('nssChatMessages');
+            if (!toggle || !win || !closeBtn || !form || !input || !messages) return;
+
+            function show(){ win.style.display = 'flex'; }
+            function hide(){ win.style.display = 'none'; }
+            toggle.addEventListener('click', show);
+            closeBtn.addEventListener('click', hide);
+
+            const faq = [
+                { k: ['slideshow','carousel','hero','gallery category'], a: 'Slideshow uses photos uploaded with category "Gallery (Slideshow)". Upload from Admin > select that category.' },
+                { k: ['photo gallery','filter','categories','education','health','environment','community'], a: 'Photo Gallery shows Education, Health, Environment, Community photos. Slideshow and Logo are excluded.' },
+                { k: ['upload','admin','password','login'], a: 'Open Admin (top-right), click Admin Login and use your admin password, then upload.' },
+                { k: ['logo','nss logo','header'], a: 'Upload with category "NSS Logo (Header)" to update the header logo only.' },
+                { k: ['delete','remove','trash','x button'], a: 'On Admin page, after login, click the × on a photo card to delete it.' },
+                { k: ['events','initiatives','about','contact','address','map'], a: 'Check the respective sections via the navbar: Initiatives, Events, About, and Contact for email/phone/address.' },
+            ];
+
+            const chatHistory = [];
+
+            function addMsg(text, from){
+                const wrap = document.createElement('div');
+                wrap.style.marginBottom = '10px';
+                wrap.style.display = 'flex';
+                wrap.style.gap = '8px';
+                wrap.style.justifyContent = from === 'me' ? 'flex-end' : 'flex-start';
+                const bubble = document.createElement('div');
+                bubble.style.padding = '10px 12px';
+                bubble.style.borderRadius = '10px';
+                bubble.style.maxWidth = '85%';
+                bubble.style.background = from === 'me' ? '#e6f7ff' : '#eef2ff';
+                bubble.style.color = '#2d3a2d';
+                bubble.textContent = text;
+                wrap.appendChild(bubble);
+                messages.appendChild(wrap);
+                messages.scrollTop = messages.scrollHeight;
+            }
+
+            async function answer(q){
+                try {
+                    // quick local FAQ boost
+                    const lower = q.toLowerCase();
+                    for (const f of faq){
+                        if (f.k.some(key => lower.includes(key))) return f.a;
+                    }
+                    // call backend AI if available
+                    const res = await fetch('http://localhost:5000/api/ai-chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message: q, history: chatHistory })
+                    });
+                    if (!res.ok) throw new Error('AI unavailable');
+                    const data = await res.json();
+                    if (data.success && data.answer) {
+                        // maintain a tiny rolling history for better context
+                        chatHistory.push({ role: 'user', content: q });
+                        chatHistory.push({ role: 'assistant', content: data.answer });
+                        if (chatHistory.length > 10) chatHistory.splice(0, chatHistory.length - 10);
+                        return data.answer;
+                    }
+                } catch (e) {
+                    // fall back to default help if API not configured
+                }
+                return 'I can help with uploads, slideshow, logo, gallery categories, events, and contact info. Try asking: "How do I upload to slideshow?"';
+            }
+
+            form.addEventListener('submit', function(e){
+                e.preventDefault();
+                const q = (input.value || '').trim();
+                if (!q) return;
+                addMsg(q, 'me');
+                input.value = '';
+                (async () => {
+                    const resp = await answer(q);
+                    addMsg(resp, 'ai');
+                })();
+            });
+        })();
+    </script>
+</body>
+</html>
